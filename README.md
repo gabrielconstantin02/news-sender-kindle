@@ -21,28 +21,6 @@ Then, it will sleep until specified time (adjustable) and do it all over again. 
 
 # Installation
 
-### Docker CLI
-
-If you want to use the provided docker image, just run:
-
-```sh
-docker run -d \
-  --name news-sender-kindle \
-  --restart unless-stopped \
-   -e EMAIL_SMTP="smtp.gmail.com" \
-   -e EMAIL_SMTP_PORT="465" \
-   -e EMAIL_USER="USER" \
-   -e EMAIL_PASSWORD="PWD" \
-   -e EMAIL_FROM="USER" \
-   -e KINDLE_EMAIL="KINDLE_USER" \
-   -e UPDATE_PERIOD="24" \
-   -e FETCH_PERIOD="24" \
-   -e ITEM="30" \
-   -e HOUR="2" \
-   -e MINUTE="45" \
-  ghcr.io/gabrielconstantin02/news-sender-kindle:latest
-```
-
 ### Python
 
 First, Change into the **cloned github repo**
@@ -90,6 +68,29 @@ The RSS feeds are listed in a file called `feeds.txt`, one per line. The modific
     docker run --env-file </path/to/env/file/> news-sender-kindle
 
 where the `.env` file contains all the environment variables defined in [news2kindle.py](src/news2kindle.py).
+
+
+### 3'+5' Alternative - Docker CLI
+
+
+```sh
+docker run -d \
+  --name news-sender-kindle \
+  --restart unless-stopped \
+   -e EMAIL_SMTP="smtp.gmail.com" \
+   -e EMAIL_SMTP_PORT="465" \
+   -e EMAIL_USER="USER" \
+   -e EMAIL_PASSWORD="PWD" \
+   -e EMAIL_FROM="USER" \
+   -e KINDLE_EMAIL="KINDLE_USER" \
+   -e UPDATE_PERIOD="24" \
+   -e FETCH_PERIOD="24" \
+   -e ITEM="30" \
+   -e HOUR="2" \
+   -e MINUTE="45" \
+  ghcr.io/gabrielconstantin02/news-sender-kindle:latest
+```
+!!! Keep in mind that the above script uses my image, which contains the predefined feed
 
 # Custom configurations
 
