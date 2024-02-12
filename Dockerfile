@@ -7,7 +7,7 @@ RUN apt-get update \
     && pip3 install -r requirements.txt
 
 COPY src/ src/
-COPY config/ config/
+COPY books-config/ books-config/
 COPY ./morss.py /usr/local/lib/python3.8/site-packages/morss/
 
 CMD ["python3", "src/news2kindle.py"]
