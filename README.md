@@ -136,18 +136,8 @@ You can contribute in many ways!
 
 # Acknowledgements
 
-This script was originally developed by model-map to whom I am very thankful. Since he no longer has the repo, I published my version where I fixed his bug regarding epub files.
-
-This author would like to thank anteprandium.
-
-This script is based on code from
-<br>
-`https://github.com/anteprandium/news2kindle` and aims to solve some of the problems faced when using anteprandium's script:
-
-1. The original script only downloaded summaries of provided rss feeds. This made the entire process redundant since to read an interesting article you'd need to redirect yourself to the host website in the end. The entire point of such a utility, in my opinion, is to provide a complete newspaper experience on your kindle.
-
-2. Anteprandium writes in their bio that this script is meant for people with know-how. This author disagrees with such Gatekeeping, believing that everyone who owns a kindle should be able to enrich their reading experience regardless of their prior programming experience.
-   <br>In that effort I have tried to write an exhaustive setup guide and have also addressed the MANY bugs and changes I had to make to get this project up and running.
-   <br>However, the author acknowledges that setting it up for individuals with NO prior experience may take a bit of effort. One that will certainly pay off. Keep at it!
-
-_Caveat_: If your MOBI file gets bigger than 25MB (easy if you have a lot of RSS sources), amazon will refuse to whispersync to your device. Can't do anything about it.
+This script was originally developed by model-map. Since he no longer has the repo, I published my version where I :
+ - fixed bugs regarding epub files sending
+ - added additional encryption types
+ - added external feed config
+ - bundeled everything into a docker image that can be used without local build
