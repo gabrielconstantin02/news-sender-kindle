@@ -36,6 +36,7 @@ PERIOD = int(os.getenv("UPDATE_PERIOD", 24))  # hours between RSS pulls
 FETCH_PERIOD=int(os.getenv("FETCH_PERIOD",24))
 HOUR=int(os.getenv("HOUR",0))
 MINUTE=int(os.getenv("MINUTES",0))
+ENCRYPTION = os.getenv("ENCRYPTION")
 
 CONFIG_PATH = '/config'
 FEED_FILE = os.path.join(CONFIG_PATH, 'feeds.txt')
@@ -158,56 +159,21 @@ def send_mail(send_from, send_to, subject, text, files):
 
     for f in files or []:
         with open(f, "rb") as fil:
-            # print("Original message:")
-            # print(fil.read())
             msg.attach(MIMEApplication(
                 fil.read(),
                 Content_Disposition=f'attachment; filename="{os.path.basename(f)}"',
                 Name=os.path.basename(f)
             ))
-    # print("Message before sending: ")
-    # print(msg.as_string())
-    smtp = smtplib.SMTP_SSL(EMAIL_SMTP, EMAIL_SMTP_PORT)
+    if ENCRYPTION == "SSL":
+        smtp = smtplib.SMTP_SSL(EMAIL_SMTP, EMAIL_SMTP_PORT)
+    elif ENCRYPTION == "TLS":
+        smtp = smtplib.SMTP(EMAIL_SMTP, EMAIL_SMTP_PORT)
+        smtp.ehlo()
+        smtp.starttls()
     smtp.login(EMAIL_USER, EMAIL_PASSWD)
     smtp.sendmail(send_from, send_to, msg.as_string())
     smtp.quit()
 
-
-# def send_ebook(url, filename, email, send_to, subject):
-#     epubfile = BytesIO()
-#     print(url)
-#     try:
-#         with urlopen(url, timeout=10) as connection:
-#             epubfile.write(connection.read())
-#     except urllib.error.HTTPError as e:
-#         print(e.read().decode())
-#     from_email = "joe@compellingsciencefiction.com"
-#     to_email = send_to
-#     msg = MIMEMultipart()
-#     msg['From'] = send_from
-#     msg['To'] = COMMASPACE.join(send_to)
-#     msg['Date'] = formatdate(localtime=True)
-#     msg['Subject'] = subject
-#
-#     # Set message body
-#     body = MIMEText("This is your daily news.\n\n--\n\n", "plain")
-#     msg.attach(body)
-#
-#     epubfile.seek(0)
-#     part = MIMEApplication(epubfile.read())
-#     part.add_header("Content-Disposition",
-#                     "attachment",
-#                     filename=filename)
-#     msg.attach(part)
-#
-#     # Convert message to string and send
-#     ses_client = boto3.client("ses", region_name="us-west-2")
-#     response = ses_client.send_raw_email(
-#         Source=from_email,
-#         Destinations=[to_email],
-#         RawMessage={"Data": msg.as_string()}
-#     )
-#     print(response)
 
 def convert_to_mobi(input_file, output_file):
     cmd = ['ebook-convert', input_file, output_file]
@@ -240,8 +206,7 @@ def do_one_round():
         epubFile = str(today_date)+'.epub'
         mobiFile = str(today_date)+'.mobi'
         os.environ['PYPANDOC_PANDOC'] = PANDOC
-        # print("Body:")
-        # print(result)
+
         pypandoc.convert_text(result,
                               to='epub3',
                               format="html",
