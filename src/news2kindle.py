@@ -38,9 +38,8 @@ HOUR=int(os.getenv("HOUR",0))
 MINUTE=int(os.getenv("MINUTES",0))
 ENCRYPTION = os.getenv("ENCRYPTION")
 
-CONFIG_PATH = '/config'
-FEED_FILE = os.path.join(CONFIG_PATH, 'feeds.txt')
-COVER_FILE = os.path.join(CONFIG_PATH, 'cover.png')
+FEED_FILE = '/config/feeds.txt'
+COVER_FILE = '/books-config/cover.png'
 
 
 feed_file = os.path.expanduser(FEED_FILE)
@@ -170,12 +169,15 @@ def send_mail(send_from, send_to, subject, text, files):
         smtp = smtplib.SMTP(EMAIL_SMTP, EMAIL_SMTP_PORT)
         smtp.ehlo()
         smtp.starttls()
+    else:
+        sys.exit("ENCRYPTION TYPE NOT FOUND !")
+
     smtp.login(EMAIL_USER, EMAIL_PASSWD)
     smtp.sendmail(send_from, send_to, msg.as_string())
     smtp.quit()
 
 
-def convert_to_mobi(input_file, output_file):
+def convert_ebook(input_file, output_file):
     cmd = ['ebook-convert', input_file, output_file]
     process = subprocess.Popen(cmd)
     process.wait()
@@ -214,9 +216,9 @@ def do_one_round():
                               extra_args=["--standalone",
                                           f"--epub-cover-image={COVER_FILE}",
                                           ])
-        convert_to_mobi(epubFile, mobiFile)
-        epubFile_2 = str(today_date)+'_converted.epub'
-        convert_to_mobi(mobiFile, epubFile_2)
+        convert_ebook(epubFile, mobiFile)
+        epubFile_2 = str(today_date)+'_news.epub'
+        convert_ebook(mobiFile, epubFile_2)
 
         logging.info("Sending to kindle email")
         send_mail(send_from=EMAIL_FROM,

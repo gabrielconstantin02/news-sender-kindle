@@ -21,7 +21,29 @@ Then, it will sleep until specified time (adjustable) and do it all over again. 
 
 # Installation
 
-### Python
+# Method 1 - Docker CLI
+
+```sh
+docker run -d \
+  --name news-sender-kindle \
+  --restart unless-stopped \
+   -e EMAIL_SMTP="SMTP_ADDRESS" \
+   -e EMAIL_SMTP_PORT="465" \
+   -e EMAIL_USER="USER" \
+   -e EMAIL_PASSWORD="PWD" \
+   -e EMAIL_FROM="USER" \
+   -e KINDLE_EMAIL="KINDLE_USER" \
+   -e UPDATE_PERIOD="24" \
+   -e FETCH_PERIOD="24" \
+   -e ITEM="30" \
+   -e HOUR="2" \
+   -e MINUTE="45" \
+   -e ENCRYPTION="TLS" \
+   -v /local/path/to/config_feed_folder:/config \
+  ghcr.io/gabrielconstantin02/news-sender-kindle:latest
+```
+
+# Method 2 - Local Build
 
 First, Change into the **cloned github repo**
 
@@ -38,8 +60,8 @@ First, Change into the **cloned github repo**
 
     nano ./config/news2kindle.env
 
-If you're using Gmail, you'd need to setup [Google App Password](https://support.google.com/accounts/answer/185833?hl=en) and use them for `username, password` fields in the file.<br>
-If you're using other service providers, then their process would vary.<br>
+If you're using Gmail, you'd need to setup [Google App Password](https://support.google.com/accounts/answer/185833?hl=en) and use them for `username, password` fields in the file. Also, `ENCRYPTION` should be set to SSL <br>
+If you're using other service providers, then their process would vary. I have provided another `ENCRYPTION` type, TLS, for services such as GMX (which is supported also in Calibre)<br>
 
     EMAIL_SMTP=smtp.gmail.com
     EMAIL_SMTP_PORT=465
@@ -52,6 +74,7 @@ If you're using other service providers, then their process would vary.<br>
     ITEM=20
     HOUR=5
     MINUTES=0
+    ENCRYPTION=SSL
 
 `mv ./config/news2kindle.env` to where you store your environment variables.
 For instance, I store mine at `/etc/environment.d/`
@@ -62,6 +85,10 @@ For instance, I store mine at `/etc/environment.d/`
 
 The RSS feeds are listed in a file called `feeds.txt`, one per line. The modification date of `feeds.txt` will be the starting date from which news are downloaded.
 
+### 5. Add instruction to Dockerfile to include local feed
+
+COPY config/ config/
+
 ### 5. Change into the **cloned github repo** and execute following docker commands:
 
     docker build -t news-sender-kindle .
@@ -70,27 +97,6 @@ The RSS feeds are listed in a file called `feeds.txt`, one per line. The modific
 where the `.env` file contains all the environment variables defined in [news2kindle.py](src/news2kindle.py).
 
 
-### 3'+5' Alternative - Docker CLI
-
-
-```sh
-docker run -d \
-  --name news-sender-kindle \
-  --restart unless-stopped \
-   -e EMAIL_SMTP="smtp.gmail.com" \
-   -e EMAIL_SMTP_PORT="465" \
-   -e EMAIL_USER="USER" \
-   -e EMAIL_PASSWORD="PWD" \
-   -e EMAIL_FROM="USER" \
-   -e KINDLE_EMAIL="KINDLE_USER" \
-   -e UPDATE_PERIOD="24" \
-   -e FETCH_PERIOD="24" \
-   -e ITEM="30" \
-   -e HOUR="2" \
-   -e MINUTE="45" \
-  ghcr.io/gabrielconstantin02/news-sender-kindle:latest
-```
-!!! Keep in mind that the above script uses my image, which contains the predefined feed
 
 # Custom configurations
 
